@@ -4,23 +4,65 @@ ob_start();
 
 require  __DIR__ . "/../vendor/autoload.php";
 
+// os headers abaixo são necessários para permitir o acesso a API
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header('Access-Control-Allow-Credentials: true'); // Permitir credenciais
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 use CoffeeCode\Router\Router;
 
 $route = new Router(url(),":");
 
 $route->namespace("Source\App\Api");
 
-$route->get("/user/login","Users:login");
-$route->post("/user","Users:createUser");
-$route->get("/user/adresses","Users:listAdresses");
-$route->post("/user/photo","Users:updatePhoto");
+/* USERS */
 
-$route->get("/faqs","Faqs:listFaqs");
-$route->get("/products","Products:listProducts");
-$route->get("/products/{product_id}","Products:getProduct");
-$route->post("/products","Products:updateProduct");
+$route->group("/users");
 
-$route->get("/products/category/{category_id}","Products:listByCategory");
+$route->get("/", "Users:listUsers");
+$route->post("/","Users:createUser");
+$route->get("/me","Users:getUser");
+$route->post("/login","Users:loginUser");
+$route->post("/update","Users:updateUser");
+$route->post("/set-password","Users:setPassword");
+$route->get("/token-validate", "Users:tokenValidate");
+
+$route->group("null");
+
+/* FAQS */
+
+$route->group("/faqs");
+
+$route->get("/","Faqs:listFaqs");
+
+$route->group("null");
+
+/* SERVICES */
+
+$route->group("/services");
+
+$route->get("/service/{serviceId}","Services:getById");
+$route->post("/service","Services:insert");
+$route->delete("/service/{serviceId}","Services:delete");
+$route->put("/service/{serviceId}/name/{name}/description/{description}","Services:update");
+$route->get("/list-by-category/category/{categoryId}","Services:listByCategory");
+//$route->get("/list-by-category/category/{categoryId}/bland/{blandId}","Services:listByCategory");
+
+$route->group("null");
+
+$route->group("/services-categories");
+$route->post("/","ServicesCategories:insert");
+$route->get("/","ServicesCategories:getCategory");
+$route->put("/","ServicesCategories:update");
+$route->delete("/","ServicesCategories:remove");
+$route->group("null");
+
 
 $route->dispatch();
 

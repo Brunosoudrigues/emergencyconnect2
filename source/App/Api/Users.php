@@ -54,85 +54,68 @@ class Users extends Api
         $this->back($users->selectAll());
     }
 
-    public function createUser(array $data)
-{
-    // Verifique se todos os campos necessários estão preenchidos
-    if (empty($data["name"]) || empty($data["email"]) || empty($data["password"])) {
+    public function createUser (array $data)
+    {
+        if(in_array("", $data)) {
+            $this->back([
+                "type" => "error",
+                "message" => "Preencha todos os campos"
+            ]);
+            return;
+        }
+
+        $user = new User(
+            null,
+            $data["name"],
+            $data["email"],
+            $data["password"]
+        );
+
+        $insertUser = $user->insert();
+
+        if(!$insertUser){
+            $this->back([
+                "type" => "error",
+                "message" => $user->getMessage()
+            ]);
+            return;
+        }
+
         $this->back([
-            "type" => "error",
-            "message" => "Preencha todos os campos"
+            "type" => "success",
+            "message" => "Usuário cadastrodo com sucesso!"
         ]);
-        return;
+
     }
 
-    // Crie o usuário com os dados fornecidos
-    $user = new User(
-        null,
-        $data["name"],
-        $data["email"],
-        $data["password"]
-    );
+    public function loginUser (array $data) {
+        $user = new User();
 
-    // Tente inserir o usuário no banco de dados
-    $insertUser = $user->insert();
-
-    // Se a inserção falhar, mostre a mensagem de erro
-    if (!$insertUser) {
+        if(!$user->login($data["email"],$data["password"])){
+            $this->back([
+                "type" => "error",
+                "message" => $user->getMessage()
+            ]);
+            return;
+        }
+        $token = new TokenJWT();
         $this->back([
-            "type" => "error",
-            "message" => $user->getMessage()
-        ]);
-        return;
-    }
-
-    // Se tudo ocorreu bem, confirme o cadastro do usuário
-    $this->back([
-        "type" => "success",
-        "message" => "Usuário cadastrado com sucesso!"
-    ]);
-}
-
-public function loginUser(array $data) {
-    // Crie um novo objeto User
-    $user = new User();
-    
-    // Verifique se os campos de email e senha estão preenchidos
-    if (empty($data["email"]) || empty($data["password"])) {
-        $this->back([
-            "type" => "error",
-            "message" => "Preencha todos os campos"
-        ]);
-        return;
-    }
-
-    // Tente fazer login
-    if (!$user->login($data["email"], $data["password"])) {
-        $this->back([
-            "type" => "error",
-            "message" => $user->getMessage()
-        ]);
-        return;
-    }
-
-    // Se o login for bem-sucedido, gere um token JWT
-    $token = new TokenJWT();
-    $this->back([
-        "type" => "success",
-        "message" => $user->getMessage(),
-        "user" => [
-            "id" => $user->getId(),
-            "name" => $user->getName(),
-            "email" => $user->getEmail(),
-            "token" => $token->create([
+            "type" => "success",
+            "message" => $user->getMessage(),
+            "user" => [
                 "id" => $user->getId(),
                 "name" => $user->getName(),
-                "email" => $user->getEmail()
-            ])
-        ]
-    ]);
-}
+                "email" => $user->getEmail(),
+                "token" => $token->create([
+                    "id" => $user->getId(),
+                    "name" => $user->getName(),
+                    "email" => $user->getEmail()
+                ])
+            ]
+        ]);
 
-    
+    }
+
     public function updateUser(array $data)
     {
         if(!$this->userAuth){

@@ -7,8 +7,6 @@ import {
 
 
 
-// Formulário de Login
-const message = document.querySelector("#message");
 const formLogin = document.querySelector("#formLogin");
 formLogin.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -16,28 +14,24 @@ formLogin.addEventListener("submit", async (e) => {
         method: "POST",
         body: new FormData(formLogin)
     }).then((response) => {
-        response.json().then((data) => {
-            if (data.type === "error") {
-                showToast(data.message); // Exibe mensagem de erro
-                return;
+        console.log(response); // Adicione isso para inspecionar a resposta
+        response.text().then((data) => {  // Use .text() temporariamente para ver o que está sendo retornado
+            console.log(data); // Veja o conteúdo da resposta no console
+            try {
+                const jsonData = JSON.parse(data);  // Tente analisar o JSON manualmente
+                if (jsonData.type == "error") {
+                    showToast(jsonData.message);
+                    return;
+                }
+                localStorage.setItem("userAuth", JSON.stringify(jsonData.user));
+                showToast(`Olá, ${getFirstName(jsonData.user.name)} como vai!`);
+                setTimeout(() => {
+                    window.location.href = getBackendUrl("app");
+                }, 3000);
+            } catch (e) {
+                console.error("Erro ao analisar JSON:", e);
+                showToast("Erro inesperado. Tente novamente mais tarde.");
             }
-
-            // Salva as informações do usuário no LocalStorage
-            localStorage.setItem("userAuth", JSON.stringify(data.user));
-            
-            // Mostra mensagem de boas-vindas
-            showToast(`Olá, ${getFirstName(data.user.name)}, como vai!`);
-            
-            // Redireciona após 3 segundos
-            setTimeout(() => {
-                window.location.href = getBackendUrl("app");
-            }, 3000);
-        }).catch((error) => {
-            console.error("Erro ao processar a resposta:", error);
-            showToast("Erro no processamento. Tente novamente.");
         });
-    }).catch((error) => {
-        console.error("Erro na requisição:", error);
-        showToast("Erro na conexão. Tente novamente.");
     });
 });

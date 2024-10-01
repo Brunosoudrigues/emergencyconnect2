@@ -1,18 +1,11 @@
-
-<?php
-  $this->start("specific-script");
-?>
-<script type="module" src="<?= url("assets/js/web/login.js"); ?>" async></script>
-<?php
-$this->end();
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link para o arquivo CSS, se houver -->
+    <link rel="stylesheet" href=""> <!-- Link para o arquivo CSS, se houver -->
+    <script type="module" src="<?= url("assets/js/web/login.js"); ?>" async></script>
     <style>
         /* Estilos básicos para o formulário */
         body {
@@ -83,10 +76,10 @@ $this->end();
     <form id="formLogin">
         <input type="email" name="email" placeholder="E-mail" required>
         <input type="password" name="password" placeholder="Senha" required>
-        <button type="submit">Entrar</button>
+        <button type="submit">Entrar.....</button>
     </form>
     <div class="message" id="message"></div> <!-- Elemento para mensagens -->
 </div>
-</script> 
+
 </body>
 </html>
