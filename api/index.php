@@ -45,13 +45,13 @@ $route->group("null");
 
 /* SERVICES */
 
-$route->group("/services");
+$route->group("/EmergencyForms");
 
-$route->get("/service/{serviceId}","Services:getById");
-$route->post("/service","Services:insert");
-$route->delete("/service/{serviceId}","Services:delete");
-$route->put("/service/{serviceId}/name/{name}/description/{description}","Services:update");
-$route->get("/list-by-category/category/{categoryId}","Services:listByCategory");
+//$route->get("/service/{serviceId}","Services:getById");
+$route->post("/","EmergencyForms:createEmergencyForm");
+//$route->delete("/service/{serviceId}","Services:delete");
+//$route->put("/service/{serviceId}/name/{name}/description/{description}","Services:update");
+//$route->get("/list-by-category/category/{categoryId}","Services:listByCategory");
 //$route->get("/list-by-category/category/{categoryId}/bland/{blandId}","Services:listByCategory");
 
 $route->group("null");

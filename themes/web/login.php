@@ -66,6 +66,7 @@
             text-align: center;
             color: #cc0000;
             display: none; /* Inicialmente oculto */
+            font-size: 18px; /* Aumenta o tamanho da fonte */
         }
     </style>
 </head>
@@ -76,7 +77,7 @@
     <form id="formLogin">
         <input type="email" name="email" placeholder="E-mail" required>
         <input type="password" name="password" placeholder="Senha" required>
-        <button type="submit">Entrar.....</button>
+        <button type="submit">Entrar</button>
     </form>
     <div class="message" id="message"></div> <!-- Elemento para mensagens -->
 </div>

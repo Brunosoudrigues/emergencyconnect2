@@ -25,7 +25,7 @@ $route->group("/app");
 
 $route->get("/", "App:home");
 $route->get("/perfil", "App:profile");
-$route->get("/primeirosocorros", "App:cart");
+$route->get("/primeirosocorros", "App:EmergencyForm");
 $route->get("/ocorrencias", "App:ocorrencia");
 
 $route->group(null);

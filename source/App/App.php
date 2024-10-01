@@ -24,9 +24,9 @@ class App
         echo $this->view->render("profile",[]);
     }
 
-    public function cart (array $data)
+    public function EmergencyForm (array $data)
     {
-        echo $this->view->render("cart", []);
+        echo $this->view->render("EmergencyForm", []);
     }
     public function ocorrencia (array $data)
     {

@@ -1,37 +1,51 @@
 import {
     getBackendUrl,
     getBackendUrlApi,
-    getFirstName,
-    showToast
+    getFirstName
 } from "./../_shared/functions.js";
 
-
-
 const formLogin = document.querySelector("#formLogin");
+const messageDiv = document.querySelector("#message");  // Captura o elemento de mensagem
+
 formLogin.addEventListener("submit", async (e) => {
     e.preventDefault();
+    
+    // Limpa mensagens anteriores
+    messageDiv.style.display = "none";
+    messageDiv.textContent = "";
+    messageDiv.style.color = ""; // Reseta a cor
+
     fetch(getBackendUrlApi("users/login"), {
         method: "POST",
         body: new FormData(formLogin)
-    }).then((response) => {
-        console.log(response); // Adicione isso para inspecionar a resposta
-        response.text().then((data) => {  // Use .text() temporariamente para ver o que está sendo retornado
-            console.log(data); // Veja o conteúdo da resposta no console
-            try {
-                const jsonData = JSON.parse(data);  // Tente analisar o JSON manualmente
-                if (jsonData.type == "error") {
-                    showToast(jsonData.message);
-                    return;
-                }
-                localStorage.setItem("userAuth", JSON.stringify(jsonData.user));
-                showToast(`Olá, ${getFirstName(jsonData.user.name)} como vai!`);
-                setTimeout(() => {
-                    window.location.href = getBackendUrl("app");
-                }, 3000);
-            } catch (e) {
-                console.error("Erro ao analisar JSON:", e);
-                showToast("Erro inesperado. Tente novamente mais tarde.");
-            }
-        });
+    })
+    .then(response => response.json())  // Parseia automaticamente o JSON da resposta
+    .then((data) => {
+        console.log(data);  // Exibe o dado retornado no console para verificar
+
+        if (data.type === "error") {  // Se for erro
+            // Exibe mensagem de erro na div com cor vermelha
+            messageDiv.style.display = "block";  // Exibe a mensagem
+            messageDiv.textContent = data.message;  // Mostra o texto de erro
+            messageDiv.style.color = "#cc0000";  // Define a cor vermelha
+            return;
+        }
+
+        // Sucesso: Exibe mensagem de boas-vindas
+        localStorage.setItem("userAuth", JSON.stringify(data.user));
+        messageDiv.style.display = "block";
+        messageDiv.textContent = `Olá, ${getFirstName(data.user.name)} como vai!`;  // Exibe mensagem de sucesso
+        messageDiv.style.color = "#28a745";  // Define a cor verde
+
+        setTimeout(() => {
+            window.location.href = getBackendUrl("app");
+        }, 3000);
+    })
+    .catch((error) => {
+        console.error("Erro:", error);
+        // Exibe mensagem de erro genérica em caso de falha na requisição
+        messageDiv.style.display = "block";
+        messageDiv.textContent = "Erro inesperado. Tente novamente mais tarde.";  // Mensagem genérica em caso de erro
+        messageDiv.style.color = "#cc0000";  // Define a cor vermelha
     });
 });

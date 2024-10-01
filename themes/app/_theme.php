@@ -1,70 +1,105 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área Privada - Site de Emergência</title>
-    <link rel="stylesheet" href="<?= url("assets/css/app/styles.css"); ?>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Perfil do Usuário</title>
     <style>
-        body {
-            background-color: #FFFFFF; /* Fundo branco */
-            color: #FF0000; /* Texto vermelho */
-            font-family: Arial, sans-serif;
+        /* Reset de margem e padding */
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
+
+        .profile-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+        }
+
         h1 {
-            margin: 0;
-            padding: 20px;
-            font-size: 36px;
-            font-weight: bold;
-            color: #FF0000;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #007bff;
         }
-        .button-container {
-            margin-top: 30px;
-        }
-        .button {
-            display: inline-flex;
-            align-items: center;
-            padding: 15px 30px;
+
+        p {
             font-size: 18px;
-            font-weight: bold;
-            color: #FFFFFF;
-            background-color: #FF0000; /* Fundo vermelho */
-            border: none;
-            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
             text-decoration: none;
-            margin: 10px;
-            transition: background-color 0.3s, transform 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            gap: 10px; /* Espaçamento entre o ícone e o texto */
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 10px 0; /* Espaçamento entre os botões */
+            transition: background-color 0.3s ease;
         }
+
         .button:hover {
-            background-color: #CC0000; /* Vermelho mais escuro para hover */
-            transform: scale(1.05);
+            background-color: #0056b3; /* Cor mais escura ao passar o mouse */
         }
-        .button:active {
-            background-color: #990000; /* Vermelho muito escuro para clique */
-            transform: scale(0.95);
+
+        .btn-logout {
+            background-color: #dc3545; /* Vermelho para o logout */
         }
-        .button i {
-            font-size: 24px; /* Tamanho dos ícones */
+
+        .btn-logout:hover {
+            background-color: #c82333;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <h1>Site de Emergência</h1>
-    <div class="button-container">
-        <a href="<?= url("app/perfil"); ?>" class="button"><i class="fas fa-user"></i> Perfil</a>
+    <div class="profile-container">
+        <h1>Bem-vindo, <span id="userName"></span>!</h1>
+        <p>Email: <span id="userEmail"></span></p>
+        <!-- Botões -->
+        <a href="<?= url("login"); ?>" class="button btn-logout" onclick="logout()">Sair</a>
         <a href="<?= url("app/primeirosocorros"); ?>" class="button"><i class="fas fa-first-aid"></i> Primeiros Socorros</a>
         <a href="<?= url("app/ocorrencias"); ?>" class="button"><i class="fas fa-list"></i> Ocorrências</a>
+        <div class="footer">EmergencyConnect © 2024</div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const user = JSON.parse(localStorage.getItem("userAuth"));
+
+            if (user) {
+                document.getElementById("userName").textContent = user.name;
+                document.getElementById("userEmail").textContent = user.email;
+            } else {
+                // Se não houver usuário, redirecionar para a página de login
+                window.location.href = "<?= url("login"); ?>";
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem("userAuth");
+        }
+    </script>
 </body>
 </html>
