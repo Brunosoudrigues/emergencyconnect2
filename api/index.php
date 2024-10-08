@@ -23,10 +23,10 @@ $route->namespace("Source\App\Api");
 
 /* USERS */
 
-$route->group("/users");
+//$route->group("/users");
 
 $route->get("/", "Users:listUsers");
-$route->post("/","Users:createUser");
+$route->post("/user","Users:createUser");
 $route->get("/me","Users:getUser");
 $route->post("/login","Users:loginUser");
 $route->post("/update","Users:updateUser");

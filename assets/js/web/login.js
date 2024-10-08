@@ -15,7 +15,7 @@ formLogin.addEventListener("submit", async (e) => {
     messageDiv.textContent = "";
     messageDiv.style.color = ""; // Reseta a cor
 
-    fetch(getBackendUrlApi("users/login"), {
+    fetch(getBackendUrlApi("/login"), {
         method: "POST",
         body: new FormData(formLogin)
     })

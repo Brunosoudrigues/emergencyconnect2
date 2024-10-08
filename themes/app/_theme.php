@@ -75,7 +75,7 @@
 </head>
 <body>
     <div class="profile-container">
-        <h1>Bem-vindo, <span id="userName"></span>!</h1>
+        <h1>Bem-vinde, <span id="userName"></span>!</h1>
         <p>Email: <span id="userEmail"></span></p>
         <!-- Botões -->
         <a href="<?= url("login"); ?>" class="button btn-logout" onclick="logout()">Sair</a>
