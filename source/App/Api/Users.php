@@ -83,7 +83,7 @@ class Users extends Api
 
         $this->back([
             "type" => "success",
-            "message" => "Usuário cadastrodo com sucesso!"
+            "message" => "Usuário cadastrado com sucesso!"
         ]);
 
     }

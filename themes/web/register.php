@@ -120,7 +120,7 @@
             try {
                 user = await response.json(); // Converte a resposta para JSON
             } catch (error) {
-                user = { success: true, message: "Cadastrado com Sucesso" };
+               //user = { success: true, message: "Cadastrado com Sucesso" };
             }
 
             // Verifica o resultado e exibe a mensagem
