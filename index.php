@@ -28,13 +28,17 @@ $route->get("/perfil", "App:profile");
 $route->get("/primeirosocorros", "App:EmergencyForm");
 $route->get("/ocorrencias", "App:ocorrencia");
 
+
 $route->group(null);
 
 $route->group("/admin");
 
 $route->get("/", "Admin:home");
-$route->get("/cadastro-produtos", "Admin:products");
-
+$route->get("/listaocorrencia", "Admin:products");
+$route->get("/Medico", "Admin:Medico");
+$route->get("/listMedico", "Admin:listMedico");
+$route->get("/updatefaq", "Admin:updatefaq");
+$route->get("/viewfaq", "Admin:viewfaq");
 $route->group(null);
 
 $route->get("/ops/{errcode}", "Web:error");

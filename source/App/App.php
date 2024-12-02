@@ -32,5 +32,5 @@ class App
     {
         echo $this->view->render("ocorrencia", []);
     }
-
+ 
 }

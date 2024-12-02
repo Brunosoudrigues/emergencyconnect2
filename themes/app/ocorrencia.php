@@ -3,103 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Histórico de Ocorrências</title>
+    <title>Consultar Ocorrências</title>
+
+    <!-- CSS Embutido para Estilo -->
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-            background-color: #f8f9fa;
-        }
-        .container {
-            background-color: #fff;
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 800px;
+            background-color: #f4f4f4;
         }
+
         h1 {
-            color: #dc3545; /* Vermelho do Bootstrap */
+            color: #333;
             text-align: center;
-            margin-bottom: 20px;
         }
-        .history {
+
+        label {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        input {
+            padding: 8px;
+            font-size: 14px;
+            width: 200px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
             margin-top: 20px;
         }
-        .history h2 {
-            color: #dc3545;
-            margin-bottom: 15px;
-            font-size: 24px;
-        }
-        .history ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .history li {
-            background-color: #ffffff;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
+
+        .occurrence {
+            background-color: white;
             padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .history .incident-type {
-            font-weight: bold;
-            color: #dc3545;
+
+        .occurrence h3 {
+            margin-top: 0;
+            color: #333;
         }
-        .history .details {
+
+        .details {
             margin-top: 10px;
-            color: #343a40;
+        }
+
+        .details p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .details strong {
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Histórico de Ocorrências</h1>
-        <div class="history">
-            <h2>Ocorrências Registradas</h2>
-            <ul>
-                <li>
-                    <div class="incident-type">Acidente</div>
-                    <div class="details">
-                    <p><strong>Numero de ocorrencia:</strong>05289249821</p>
-                        <p><strong>Local:</strong> Rua das Flores, 123</p>
-                        <p><strong>Gravidade:</strong> Moderado</p>
-                        <p><strong>Detalhes:</strong> O indivíduo sofreu uma queda e está com ferimentos leves.</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="incident-type">Incêndio</div>
-                    <div class="details">
-                    <p><strong>Numero de ocorrencia:</strong>907807601</p>
-                        <p><strong>Local:</strong> Avenida Central, 456</p>
-                        <p><strong>Tamanho:</strong> Grande</p>
-                        <p><strong>Detalhes:</strong> Incêndio em um prédio comercial. Equipes de combate a incêndio no local.</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="incident-type">Envenenamento</div>
-                    <div class="details">
-                    <p><strong>Numero de ocorrencia:</strong>38075075249821</p>
-                        <p><strong>Fonte:</strong> Produtos de limpeza</p>
-                        <p><strong>Sintomas:</strong> Náuseas e dificuldade respiratória</p>
-                        <p><strong>Detalhes:</strong> A vítima foi exposta a produtos químicos e apresenta sintomas graves.</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="incident-type">Afogamento</div>
-                    <div class="details">
-                        <p><strong>Local:</strong> Piscina Municipal</p>
-                        <p><strong>Profundidade:</strong> 2 metros</p>
-                        <p><strong>Detalhes:</strong> Vítima resgatada da piscina, consciente mas com dificuldade para respirar.</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
+
+    <h1>Consultar Ocorrências</h1>
+
+    <label for="cpf">Digite seu CPF:</label>
+    <input type="text" id="cpf" name="cpf" placeholder="CPF (somente números)" required>
+    <button onclick="getOccurrences()">Consultar</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function getOccurrences() {
+            const cpf = document.getElementById('cpf').value;
+
+            // Verificar se o CPF tem 11 caracteres
+            if (cpf.length !== 11 || isNaN(cpf)) {
+                alert('CPF inválido! O CPF deve ter 11 números.');
+                return;
+            }
+
+            // Fazer a requisição GET para a API
+            const response = await fetch(`http://localhost/emergencyconnect2/api/emergencyForms/occurrences/${cpf}`);
+            const data = await response.json();
+
+            // Exibir os resultados
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';  // Limpar resultados anteriores
+
+            // Verificar se a resposta foi bem-sucedida
+            if (data.type === 'success' && data.data.length > 0) {
+                const occurrences = data.data;
+                occurrences.forEach(occurrence => {
+                    let html = `
+                        <div class="occurrence">
+                            <h3>Ocorrência ID: ${occurrence.id}</h3>
+                            <div class="details">
+                                <p><strong>CPF:</strong> ${occurrence.cpf}</p>
+                                <p><strong>Tipo de Incidente:</strong> ${occurrence.typeOfIncident}</p>
+                                <p><strong>Condição de Saúde:</strong> ${occurrence.healthCondition}</p>
+                                <p><strong>Endereço:</strong> ${occurrence.address}</p>
+                                <p><strong>Local da Dor:</strong> ${occurrence.painLocation || 'Não informado'}</p>
+                                <p><strong>Respiração:</strong> ${occurrence.breathing || 'Não informado'}</p>
+                                <p><strong>Consciência:</strong> ${occurrence.consciousness || 'Não informado'}</p>
+                                <p><strong>Lesões:</strong> ${occurrence.injuries || 'Não informado'}</p>
+                                <p><strong>Alergias:</strong> ${occurrence.allergies || 'Não informado'}</p>
+                                <p><strong>Medicações:</strong> ${occurrence.medications || 'Não informado'}</p>
+                                <p><strong>Contato de Emergência:</strong> ${occurrence.emergencyContact}</p>
+                            </div>
+                        </div>
+                    `;
+                    resultDiv.innerHTML += html;
+                });
+            } else {
+                resultDiv.innerHTML = `<p>Não foram encontradas ocorrências para este CPF.</p>`;
+            }
+        }
+    </script>
+
 </body>
 </html>

@@ -2,9 +2,9 @@
 
 ob_start();
 
-require  __DIR__ . "/../vendor/autoload.php";
+require __DIR__ . "/../vendor/autoload.php";
 
-// os headers abaixo são necessários para permitir o acesso a API
+// Cabeçalhos para permitir o acesso à API
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -17,53 +17,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 use CoffeeCode\Router\Router;
 
-$route = new Router(url(),":");
+$route = new Router(url(), ":");
 
 $route->namespace("Source\App\Api");
 
 /* USERS */
-
-//$route->group("/users");
-
 $route->get("/", "Users:listUsers");
-$route->post("/user","Users:createUser");
-$route->get("/me","Users:getUser");
-$route->post("/login","Users:loginUser");
-$route->post("/update","Users:updateUser");
-$route->post("/set-password","Users:setPassword");
+$route->post("/user", "Users:createUser");
+$route->get("/me", "Users:getUser");
+$route->post("/login", "Users:loginUser");
+$route->post("/update", "Users:updateUser");
+$route->post("/set-password", "Users:setPassword");
 $route->get("/token-validate", "Users:tokenValidate");
+
+$route->group("/medicos");
+
+    // Rota para criar um novo médico
+    $route->post("/", "Medicos:createMedico");
+
+    $route->get("/list", "Medicos:getAllMedicos");
+
 
 $route->group("null");
 
 /* FAQS */
-
 $route->group("/faqs");
+$route->post("/create", "Faqs:createFaq");
+$route->post("/update/{id}", "Faqs:updateFaq");
+$route->get("/list", "Faqs:getAllFaqs");
+$route->get("/updatefaq/{id}", "Faqs:editFaq"); // Rota para carregar o formulário de edição
 
-$route->get("/","Faqs:listFaqs");
+    $route->get("/", "Faqs:listFaqs");
+$route->group("null");
+
+/* EMERGENCY FORMS */
+$route->group("/emergencyForms");
+
+    $route->post("/", "EmergencyForms:createEmergencyForm");
+    $route->get("/occurrences/{cpf}", "EmergencyForms:getOccurrencesByCpf"); // Buscar por CPF
+    $route->get("/occurrences", "EmergencyForms:getAllOccurrences"); // Buscar todas as ocorrências
 
 $route->group("null");
 
-/* SERVICES */
-
-$route->group("/EmergencyForms");
-
-//$route->get("/service/{serviceId}","Services:getById");
-$route->post("/","EmergencyForms:createEmergencyForm");
-//$route->delete("/service/{serviceId}","Services:delete");
-//$route->put("/service/{serviceId}/name/{name}/description/{description}","Services:update");
-//$route->get("/list-by-category/category/{categoryId}","Services:listByCategory");
-//$route->get("/list-by-category/category/{categoryId}/bland/{blandId}","Services:listByCategory");
-
-$route->group("null");
-
+/* SERVICES CATEGORIES */
 $route->group("/services-categories");
-$route->post("/","ServicesCategories:insert");
-$route->get("/","ServicesCategories:getCategory");
-$route->put("/","ServicesCategories:update");
-$route->delete("/","ServicesCategories:remove");
+    $route->post("/", "ServicesCategories:insert");
+    $route->get("/", "ServicesCategories:getCategory");
+    $route->put("/", "ServicesCategories:update");
+    $route->delete("/", "ServicesCategories:remove");
 $route->group("null");
 
-
+/** ERROR HANDLER */
 $route->dispatch();
 
 /** ERROR REDIRECT */
@@ -73,7 +77,7 @@ if ($route->error()) {
 
     echo json_encode([
         "errors" => [
-            "type " => "endpoint_not_found",
+            "type" => "endpoint_not_found",
             "message" => "Não foi possível processar a requisição"
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

@@ -34,25 +34,26 @@ abstract class Model
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    public function insert(): ?int
+    public function insert()
     {
         $values = get_object_vars($this); // Pega os valores dos atributos do objeto
         unset($values['entity'], $values['message']); // Remove propriedades indesejadas
-
+    
         $columns = array_keys($values);
         $placeholders = array_map(fn($col) => ":{$col}", $columns);
-
+    
         $columnsString = implode(", ", $columns);
         $placeholdersString = implode(", ", $placeholders);
-
+    
+        // Usando Connect::getInstance() diretamente aqui
         $conn = Connect::getInstance();
         $query = "INSERT INTO {$this->entity} ({$columnsString}) VALUES ({$placeholdersString})";
         $stmt = $conn->prepare($query);
-
+    
         foreach ($values as $key => $value) {
             $stmt->bindValue(":{$key}", $value);
         }
-
+    
         try {
             $stmt->execute();
             $this->message = "Registro inserido com sucesso!";
@@ -62,5 +63,6 @@ abstract class Model
             return false;
         }
     }
+    
 }
     

@@ -22,5 +22,21 @@ class Admin
     public function products () {
         echo $this->view->render("products",[]);
     }
-
+    public function Medico ()
+    {
+        echo $this->view->render("Medico", []);
+    }
+    
+    public function listMedico ()
+    {
+        echo $this->view->render("listMedico", []);
+    }
+    public function updatefaq ()
+    {
+        echo $this->view->render("updatefaq", []);
+    }
+    public function viewfaq ()
+    {
+        echo $this->view->render("viewfaq", []);
+    }
 }
