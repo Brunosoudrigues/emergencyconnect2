@@ -69,15 +69,14 @@ class Faqs extends Api
             'data' => $list
         ], 200);  // 200 é o código de status para sucesso
     }
-
-    // Função para editar uma FAQ
-    public function updateFaq($request, $response, $args) {
+    public function updateFaq($request, $response, $args)
+    {
         // Pega o ID da FAQ da URL (da rota)
-        $faqId = $args['id'];
-
+        $faqId = $args['id'];  // O ID vem de {id} na URL
+        
         // Obtém os dados do corpo da requisição (presumivelmente em JSON)
         $data = $request->getParsedBody();
-
+    
         // Verifica se os dados necessários foram enviados
         if (!isset($data['question']) || !isset($data['answer'])) {
             return $response->withJson([
@@ -85,8 +84,8 @@ class Faqs extends Api
                 'message' => 'Pergunta e resposta são obrigatórios.'
             ], 400); // Retorna erro 400 se os dados estiverem incompletos
         }
-
-        // Tenta atualizar a FAQ
+    
+        // Tenta obter a FAQ com o ID fornecido
         $faq = (new Question())->selectById($faqId);
         if ($faq === null) {
             return $response->withJson([
@@ -94,25 +93,31 @@ class Faqs extends Api
                 'message' => 'FAQ não encontrada.'
             ], 404); // Retorna erro 404 se a FAQ não for encontrada
         }
-
+    
         // Atualiza os dados da FAQ
         $faq->setQuestion($data['question']);
         $faq->setAnswer($data['answer']);
-        $faq->save();
-
-        // Retorna sucesso com os dados atualizados
-        return $response->withJson([
-            'success' => true,
-            'message' => 'FAQ atualizada com sucesso.',
-            'data' => [
-                'faqId' => $faq->getId(),
-                'question' => $faq->getQuestion(),
-                'answer' => $faq->getAnswer()
-            ]
-        ]);
+        
+        // Salva as alterações no banco de dados
+        if ($faq->update()) {
+            return $response->withJson([
+                'success' => true,
+                'message' => 'FAQ atualizada com sucesso.',
+                'data' => [
+                    'faqId' => $faq->getId(),
+                    'question' => $faq->getQuestion(),
+                    'answer' => $faq->getAnswer()
+                ]
+            ]);
+        } else {
+            return $response->withJson([
+                'success' => false,
+                'message' => 'Erro ao atualizar a FAQ.'
+            ], 500); // Retorna erro 500 se falhar ao atualizar
+        }
     }
-
     
+
 }
 
 ?>

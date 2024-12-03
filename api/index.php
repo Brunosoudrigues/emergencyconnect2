@@ -43,7 +43,7 @@ $route->group("null");
 /* FAQS */
 $route->group("/faqs");
 $route->post("/create", "Faqs:createFaq");
-$route->post("/update/{id}", "Faqs:updateFaq");
+$route->post("/faq/{id}", "Faqs:updateFaq");
 $route->get("/list", "Faqs:getAllFaqs");
 $route->get("/updatefaq/{id}", "Faqs:editFaq"); // Rota para carregar o formulário de edição
 

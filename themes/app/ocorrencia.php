@@ -75,6 +75,9 @@
             color: #333;
         }
     </style>
+
+    <!-- Incluir a biblioteca jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -83,10 +86,13 @@
     <label for="cpf">Digite seu CPF:</label>
     <input type="text" id="cpf" name="cpf" placeholder="CPF (somente números)" required>
     <button onclick="getOccurrences()">Consultar</button>
+    <button onclick="generatePDF()">Gerar Relatório em PDF</button>
 
     <div id="result"></div>
 
     <script>
+        let occurrencesData = [];  // Variável global para armazenar as ocorrências
+
         async function getOccurrences() {
             const cpf = document.getElementById('cpf').value;
 
@@ -106,8 +112,8 @@
 
             // Verificar se a resposta foi bem-sucedida
             if (data.type === 'success' && data.data.length > 0) {
-                const occurrences = data.data;
-                occurrences.forEach(occurrence => {
+                occurrencesData = data.data;  // Armazenar dados das ocorrências
+                occurrencesData.forEach(occurrence => {
                     let html = `
                         <div class="occurrence">
                             <h3>Ocorrência ID: ${occurrence.id}</h3>
@@ -131,6 +137,63 @@
             } else {
                 resultDiv.innerHTML = `<p>Não foram encontradas ocorrências para este CPF.</p>`;
             }
+        }
+
+        // Função para gerar o relatório em PDF
+        function generatePDF() {
+            if (occurrencesData.length === 0) {
+                alert('Nenhuma ocorrência encontrada para gerar o relatório.');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Título
+            doc.setFontSize(18);
+            doc.text('Relatório de Ocorrências', 20, 20);
+            doc.setFontSize(12);
+
+            let yPosition = 30; // Posição inicial do conteúdo
+
+            occurrencesData.forEach((occurrence, index) => {
+                if (yPosition > 250) {
+                    doc.addPage();  // Adiciona uma nova página se o conteúdo ultrapassar a posição
+                    yPosition = 20;  // Reseta a posição para o início da nova página
+                }
+
+                doc.text(`Ocorrência ID: ${occurrence.id}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`CPF: ${occurrence.cpf}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Tipo de Incidente: ${occurrence.typeOfIncident}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Condição de Saúde: ${occurrence.healthCondition}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Endereço: ${occurrence.address}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Local da Dor: ${occurrence.painLocation || 'Não informado'}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Respiração: ${occurrence.breathing || 'Não informado'}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Consciência: ${occurrence.consciousness || 'Não informado'}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Lesões: ${occurrence.injuries || 'Não informado'}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Alergias: ${occurrence.allergies || 'Não informado'}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Medicações: ${occurrence.medications || 'Não informado'}`, 20, yPosition);
+                yPosition += 10;
+                doc.text(`Contato de Emergência: ${occurrence.emergencyContact}`, 20, yPosition);
+                yPosition += 20;  // Espaço após a ocorrência
+
+                // Adiciona uma linha de separação entre as ocorrências
+                doc.line(20, yPosition, 190, yPosition);
+                yPosition += 10;
+            });
+
+            // Salvar o PDF
+            doc.save('relatorio_ocorrencias.pdf');
         }
     </script>
 
